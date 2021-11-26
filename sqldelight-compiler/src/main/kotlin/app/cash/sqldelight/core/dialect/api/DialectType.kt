@@ -3,7 +3,7 @@ package app.cash.sqldelight.core.dialect.api
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
 
-internal interface DialectType {
+interface DialectType {
 
   val javaType: TypeName
 

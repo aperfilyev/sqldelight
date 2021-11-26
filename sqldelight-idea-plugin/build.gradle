@@ -81,6 +81,7 @@ dependencies {
   implementation(deps.bugsnag) {
     exclude group: "org.slf4j"
   }
+  implementation "com.jakewharton.picnic:picnic:0.5.0"
 
   testImplementation deps.truth
   testImplementation project(':test-util')

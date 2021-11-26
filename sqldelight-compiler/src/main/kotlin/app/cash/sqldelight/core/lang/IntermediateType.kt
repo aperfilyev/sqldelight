@@ -37,7 +37,7 @@ import com.squareup.kotlinpoet.asClassName
  * Internal representation for a column type, which has SQLite data affinity as well as JVM class
  * type.
  */
-internal data class IntermediateType(
+data class IntermediateType(
   val dialectType: DialectType,
   val javaType: TypeName = dialectType.javaType,
   /**

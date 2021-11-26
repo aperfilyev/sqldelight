@@ -72,6 +72,13 @@
     <renamePsiElementProcessor
         implementation="app.cash.sqldelight.intellij.SqlDelightRenameProcessor"/>
 
+    <configurationType
+        implementation="com.squareup.sqldelight.intellij.run.SqlDelightRunConfigurationType"/>
+    <runConfigurationProducer
+        implementation="com.squareup.sqldelight.intellij.run.SqlDelightRunConfigurationProducer"/>
+    <runLineMarkerContributor language="SqlDelight"
+        implementationClass="com.squareup.sqldelight.intellij.run.SqlDelightRunLineMarkerContributor"/>
+
     <lang.findUsagesProvider
         implementationClass="app.cash.sqldelight.intellij.SqlDelightFindUsagesProvider"
         language="SqlDelight"/>
