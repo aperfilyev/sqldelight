@@ -2,6 +2,7 @@ package com.squareup.sqldelight.intellij.run
 
 import com.alecstrong.sql.psi.core.psi.SqlStmt
 import com.intellij.execution.process.ProcessOutputType
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
@@ -18,6 +19,7 @@ import com.squareup.sqldelight.core.lang.SqlDelightFile
 import com.squareup.sqldelight.core.lang.SqlDelightFileType
 import com.squareup.sqldelight.core.lang.util.findChildOfType
 import com.squareup.sqldelight.core.lang.util.rawSqlText
+import com.squareup.sqldelight.intellij.run.PickDatabaseFileAction.PickDatabaseFileDialog
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.sql.ResultSet
@@ -32,12 +34,18 @@ internal class ExecuteSqlTask(
   private val parameters: List<SqlParameter>
 ) : Task.Backgroundable(project, "SQLDelight") {
 
-  private val path = ("${project.basePath}/Database.db")
-
   override fun run(indicator: ProgressIndicator) {
     try {
       processHandler.startNotify()
-      execSql(sql, parameters)
+      var path = PropertiesComponent.getInstance(project).getValue(DB_PATH_PROPERTY)
+      if (path != null) {
+        execSql(path, sql, parameters)
+      } else {
+        if (showDialog { PickDatabaseFileDialog(project) }) {
+          path = PropertiesComponent.getInstance(project).getValue(DB_PATH_PROPERTY) ?: return
+          execSql(path, sql, parameters)
+        }
+      }
     } catch (e: SQLException) {
       val message = e.message ?: "Unknown error during execution of query $sql"
       processHandler.notifyTextAvailable(message, ProcessOutputType.STDERR)
@@ -46,10 +54,10 @@ internal class ExecuteSqlTask(
     }
   }
 
-  private fun execSql(sql: String, parameters: List<SqlParameter>) {
+  private fun execSql(path: String, sql: String, parameters: List<SqlParameter>) {
     var sql = sql
     if (parameters.isNotEmpty()) {
-      if (!showDialog(parameters)) {
+      if (!showDialog { InputArgumentsDialog(project, parameters) }) {
         return
       }
       sql = bindParameters(sql, parameters)
@@ -69,17 +77,17 @@ internal class ExecuteSqlTask(
     }
   }
 
-  private fun showDialog(parameters: List<SqlParameter>): Boolean {
+  private inline fun showDialog(crossinline dialog: () -> DialogWrapper): Boolean {
     val latch = CountDownLatch(1)
     var ok = false
     ApplicationManager.getApplication().invokeLater {
-      val dialog = InputArgumentsDialog(project, parameters)
-      dialog.window.addWindowListener(object : WindowAdapter() {
+      val dialogWrapper = dialog()
+      dialogWrapper.window.addWindowListener(object : WindowAdapter() {
         override fun windowClosed(e: WindowEvent?) {
           latch.countDown()
         }
       })
-      ok = dialog.showAndGet()
+      ok = dialogWrapper.showAndGet()
     }
     latch.await()
     return ok
