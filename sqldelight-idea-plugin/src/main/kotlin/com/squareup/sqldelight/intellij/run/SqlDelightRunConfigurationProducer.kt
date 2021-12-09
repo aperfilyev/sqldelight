@@ -14,6 +14,7 @@ import com.squareup.sqldelight.core.compiler.model.NamedMutator
 import com.squareup.sqldelight.core.lang.psi.StmtIdentifierMixin
 import com.squareup.sqldelight.core.lang.util.range
 import com.squareup.sqldelight.core.lang.util.rawSqlText
+import com.squareup.sqldelight.intellij.util.isAndroidPluginEnabled
 import com.squareup.sqldelight.intellij.util.isSqlite
 import com.squareup.sqldelight.intellij.util.sqlDialect
 
@@ -37,6 +38,9 @@ internal class SqlDelightRunConfigurationProducer : LazyRunConfigurationProducer
     context: ConfigurationContext,
     sourceElement: Ref<PsiElement>
   ): Boolean {
+    if (isAndroidPluginEnabled) {
+      return false
+    }
     if (sourceElement.isNull) {
       return false
     }

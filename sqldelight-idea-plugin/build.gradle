@@ -8,14 +8,16 @@ plugins {
 
 intellij {
   updateSinceUntilBuild = false
-  version = "IC-${versions.idea}"
+//  version = "IC-${versions.idea}"
+//  version = "2021.2.3"
   pluginName = 'SQLDelight'
   plugins = [
-      "org.jetbrains.kotlin:202-1.5.0-release-760-IJ8194.7",
+      "org.jetbrains.kotlin",
       "gradle",
       "com.intellij.java",
       "Groovy",
       "properties",
+      "android"
   ]
   if (!project.version.endsWith("SNAPSHOT")) {
     patchPluginXml {
@@ -28,6 +30,7 @@ intellij {
   }
   // Uncomment to test against Android Studio
   // alternativeIdePath = '/Applications/Android Studio.app'
+   localPath = '/Users/aperfilyev/Library/Application Support/JetBrains/Toolbox/apps/AndroidStudio/ch-1/203.7784292/Android Studio.app'
 }
 
 runPluginVerifier {
@@ -46,6 +49,14 @@ runPluginVerifier {
   customFailureLevel.remove(FailureLevel.NOT_DYNAMIC)
 
   setFailureLevel(customFailureLevel)
+}
+
+runIde {
+  ideDir = file('/Users/aperfilyev/Library/Application Support/JetBrains/Toolbox/apps/AndroidStudio/ch-1/203.7784292/Android Studio.app/Contents')
+}
+
+instrumentCode {
+  compilerVersion = versions.idea // latest build of com.jetbrains.intellij.java from https://www.jetbrains.com/intellij-repository/releases/
 }
 
 changelog {

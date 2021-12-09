@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.RecentsManager
 import com.intellij.ui.layout.panel
+import com.squareup.sqldelight.intellij.util.isAndroidPluginEnabled
 import javax.swing.JComponent
 
 internal const val RECENTS_KEY = "ActionDialog.RECENTS_KEY"
@@ -20,6 +21,10 @@ internal class PickDatabaseFileAction : AnAction() {
     if (project != null) {
       PickDatabaseFileDialog(project).show()
     }
+  }
+
+  override fun update(e: AnActionEvent) {
+    e.presentation.isEnabled = !isAndroidPluginEnabled
   }
 
   internal class PickDatabaseFileDialog(private val project: Project) : DialogWrapper(project) {
@@ -35,12 +40,12 @@ internal class PickDatabaseFileAction : AnAction() {
       val chooserDescriptor = FileTypeDescriptor("Choose Database", "db")
       return panel {
         row("Database file:") {
-          textFieldWithHistoryWithBrowseButton(
-            browseDialogTitle = "File",
-            value = PropertiesComponent.getInstance(project).getValue(DB_PATH_PROPERTY),
-            fileChooserDescriptor = chooserDescriptor,
-            historyProvider = { history.orEmpty() }
-          ) { vFile -> vFile.path.also { selectedPath = it } }
+          // textFieldWithHistoryWithBrowseButton(
+          //   browseDialogTitle = "File",
+          //   value = PropertiesComponent.getInstance(project).getValue(DB_PATH_PROPERTY),
+          //   fileChooserDescriptor = chooserDescriptor,
+          //   historyProvider = { history.orEmpty() }
+          // ) { vFile -> vFile.path.also { selectedPath = it } }
         }
       }
     }
