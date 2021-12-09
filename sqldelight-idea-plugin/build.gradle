@@ -8,14 +8,15 @@ plugins {
 
 intellij {
   updateSinceUntilBuild = false
-  version = "IC-${versions.idea}"
+//  version = "IC-${versions.idea}"
   pluginName = 'SQLDelight'
   plugins = [
-      "org.jetbrains.kotlin:202-1.5.0-release-760-IJ8194.7",
+      "org.jetbrains.kotlin",
       "gradle",
       "com.intellij.java",
       "Groovy",
       "properties",
+      "android"
   ]
   if (!project.version.endsWith("SNAPSHOT")) {
     patchPluginXml {
@@ -27,12 +28,11 @@ intellij {
     }
   }
   // Uncomment to test against Android Studio
-  // alternativeIdePath = '/Applications/Android Studio.app'
+   localPath = '/path/to/Android Studio.app'
 }
 
 runPluginVerifier {
   ideVersions = [
-      "IC-2020.2.4",
       "IC-2020.3.2",
       "IC-2021.1",
       "IC-2021.2.3",
@@ -46,6 +46,14 @@ runPluginVerifier {
   customFailureLevel.remove(FailureLevel.NOT_DYNAMIC)
 
   setFailureLevel(customFailureLevel)
+}
+
+//runIde {
+//  ideDir = file('/path/to/Android Studio.app/Contents')
+//}
+
+instrumentCode {
+  compilerVersion = versions.idea
 }
 
 changelog {

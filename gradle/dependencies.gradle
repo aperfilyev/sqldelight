@@ -3,7 +3,7 @@ ext.versions = [
     dokka: '1.4.32',
     kotlinCoroutines: '1.5.2',
     compileSdk: 30,
-    idea: '202.8194.7',
+    idea: '203.7717.56',
     androidxSqlite: '2.1.0',
     minSdk: 14,
     schemaCrawler: '14.16.04.01-java7',
