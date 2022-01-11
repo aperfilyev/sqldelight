@@ -16,11 +16,11 @@
 
 package app.cash.sqldelight.intellij.util
 
+import app.cash.sqldelight.core.lang.SqlDelightFile
 import com.alecstrong.sql.psi.core.DialectPreset
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import com.squareup.sqldelight.core.lang.SqlDelightFile
 
 internal inline fun <reified T : PsiElement> PsiElement.prevSiblingOfType(): T? =
   PsiTreeUtil.getPrevSiblingOfType(this, T::class.java)

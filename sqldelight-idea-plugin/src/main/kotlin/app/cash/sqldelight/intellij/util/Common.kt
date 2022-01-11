@@ -1,4 +1,4 @@
-package com.squareup.sqldelight.intellij.util
+package app.cash.sqldelight.intellij.util
 
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId

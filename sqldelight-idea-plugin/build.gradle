@@ -8,8 +8,7 @@ plugins {
 
 intellij {
   updateSinceUntilBuild = false
-//  version = "IC-${versions.idea}"
-//  version = "2021.2.3"
+  version = "IC-${versions.idea}"
   pluginName = 'SQLDelight'
   plugins = [
       "org.jetbrains.kotlin",
@@ -30,7 +29,6 @@ intellij {
   }
   // Uncomment to test against Android Studio
   // alternativeIdePath = '/Applications/Android Studio.app'
-   localPath = '/Users/aperfilyev/Library/Application Support/JetBrains/Toolbox/apps/AndroidStudio/ch-1/203.7784292/Android Studio.app'
 }
 
 runPluginVerifier {

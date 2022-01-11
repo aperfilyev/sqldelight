@@ -1,4 +1,4 @@
-package com.squareup.sqldelight.intellij.run
+package app.cash.sqldelight.intellij.run
 
 import java.sql.Connection
 import java.sql.DriverManager

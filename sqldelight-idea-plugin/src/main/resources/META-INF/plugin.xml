@@ -8,8 +8,6 @@
   <depends>com.intellij.java</depends>
   <depends>org.jetbrains.kotlin</depends>
   <depends>com.intellij.gradle</depends>
-<!--  <depends optional="true" config-file="com.squareup.sqldelight-withAndroid.xml">org.jetbrains.android</depends>-->
-  <depends optional="true" config-file="com.squareup.sqldelight-withAndroid.xml">com.intellij.modules.androidstudio</depends>
 
   <description><![CDATA[
       Generates typesafe Kotlin APIs from SQL, and provides language
@@ -61,6 +59,8 @@
         implementationClass="com.alecstrong.sql.psi.core.SqlAnnotator"/>
     <annotator language="SqlDelight"
         implementationClass="app.cash.sqldelight.intellij.SqlDelightClassNameElementAnnotator"/>
+    <annotator language="SqlDelight"
+        implementationClass="app.cash.sqldelight.intellij.run.SqlDelightRunAnnotator"/>
     <completion.contributor language="SqlDelight"
         implementationClass="app.cash.sqldelight.intellij.SqlDelightClassCompletionContributor"/>
     <completion.contributor language="SqlDelight"
@@ -73,13 +73,6 @@
         implementation="app.cash.sqldelight.intellij.SqlDelightFindUsagesHandlerFactory"/>
     <renamePsiElementProcessor
         implementation="app.cash.sqldelight.intellij.SqlDelightRenameProcessor"/>
-
-    <configurationType
-        implementation="com.squareup.sqldelight.intellij.run.SqlDelightRunConfigurationType"/>
-    <runConfigurationProducer
-        implementation="com.squareup.sqldelight.intellij.run.SqlDelightRunConfigurationProducer"/>
-    <runLineMarkerContributor language="SqlDelight"
-        implementationClass="com.squareup.sqldelight.intellij.run.SqlDelightRunLineMarkerContributor"/>
 
     <lang.findUsagesProvider
         implementationClass="app.cash.sqldelight.intellij.SqlDelightFindUsagesProvider"
@@ -232,9 +225,15 @@
         text="Delete By Primary Key">
       <add-to-group group-id="GenerateGroup"/>
     </action>
-    <action id="com.squareup.sqldelight.intellij.run.PickDatabaseFileAction"
-        class="com.squareup.sqldelight.intellij.run.PickDatabaseFileAction" text="Open database">
-      <add-to-group group-id="ToolsMenu" anchor="first"/>
-    </action>
+
+    <group id="app.cash.sqldelight.intellij.actions.SqlDelightActionGroup"
+        text="SQLDelight"
+        popup="true">
+      <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="KotlinToolsGroup"/>
+
+      <action id="app.cash.sqldelight.intellij.run.SelectConnectionTypeAction"
+          class="app.cash.sqldelight.intellij.run.SelectConnectionTypeAction"
+          text="Select Connection Type"/>
+    </group>
   </actions>
 </idea-plugin>
