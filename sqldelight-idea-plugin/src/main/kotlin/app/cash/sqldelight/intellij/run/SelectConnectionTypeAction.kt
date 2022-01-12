@@ -1,5 +1,7 @@
 package app.cash.sqldelight.intellij.run
 
+import app.cash.sqldelight.core.SqlDelightProjectService
+import com.alecstrong.sql.psi.core.DialectPreset
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.propComponentProperty
 import com.intellij.openapi.actionSystem.AnAction
@@ -19,7 +21,6 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 internal const val RECENT_DB_PATH = "app.cash.sqldelight.recentPath"
-internal const val DB_PATH_PROPERTY = "app.cash.sqldelight.dbPath"
 internal const val DB_CONNECTION_TYPE = "app.cash.sqldelight.connectionType"
 
 internal class SelectConnectionTypeAction : AnAction() {
@@ -30,11 +31,20 @@ internal class SelectConnectionTypeAction : AnAction() {
       SelectConnectionTypeDialog(project).show()
     }
   }
+
+  override fun update(e: AnActionEvent) {
+    val project = e.project ?: return
+    val projectService = SqlDelightProjectService.getInstance(project)
+    e.presentation.isEnabledAndVisible = projectService.dialectPreset.isSqlite
+  }
+
+  private val DialectPreset.isSqlite: Boolean
+    get() = name.startsWith("sqlite", true)
 }
 
-enum class ConnectionType(val type: Int) {
-  NONE(1),
-  FILE(2)
+internal enum class ConnectionType(val type: Int) {
+  NONE(0),
+  FILE(1)
 }
 
 private class ConnectionTypeProperty(project: Project) : ReadWriteProperty<Any, ConnectionType> {
@@ -47,12 +57,14 @@ private class ConnectionTypeProperty(project: Project) : ReadWriteProperty<Any, 
 
   override fun setValue(thisRef: Any, property: KProperty<*>, value: ConnectionType) {
     propertiesComponent.setValue(
-      DB_CONNECTION_TYPE, value.type, ConnectionType.NONE.type
+      DB_CONNECTION_TYPE,
+      value.type,
+      ConnectionType.NONE.type
     )
   }
 }
 
-fun connectionType(project: Project): ReadWriteProperty<Any, ConnectionType> =
+private fun connectionType(project: Project): ReadWriteProperty<Any, ConnectionType> =
   ConnectionTypeProperty(project)
 
 internal class ConnectionOptions(val project: Project) {

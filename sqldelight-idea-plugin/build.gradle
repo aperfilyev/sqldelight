@@ -11,12 +11,11 @@ intellij {
   version = "IC-${versions.idea}"
   pluginName = 'SQLDelight'
   plugins = [
-      "org.jetbrains.kotlin",
+      "org.jetbrains.kotlin:202-1.5.0-release-760-IJ8194.7",
       "gradle",
       "com.intellij.java",
       "Groovy",
       "properties",
-      "android"
   ]
   if (!project.version.endsWith("SNAPSHOT")) {
     patchPluginXml {
@@ -47,14 +46,6 @@ runPluginVerifier {
   customFailureLevel.remove(FailureLevel.NOT_DYNAMIC)
 
   setFailureLevel(customFailureLevel)
-}
-
-runIde {
-  ideDir = file('/Users/aperfilyev/Library/Application Support/JetBrains/Toolbox/apps/AndroidStudio/ch-1/203.7784292/Android Studio.app/Contents')
-}
-
-instrumentCode {
-  compilerVersion = versions.idea // latest build of com.jetbrains.intellij.java from https://www.jetbrains.com/intellij-repository/releases/
 }
 
 changelog {
@@ -90,7 +81,7 @@ dependencies {
   implementation(deps.bugsnag) {
     exclude group: "org.slf4j"
   }
-  implementation "com.jakewharton.picnic:picnic:0.5.0"
+  implementation deps.picnic
 
   testImplementation deps.truth
   testImplementation project(':test-util')

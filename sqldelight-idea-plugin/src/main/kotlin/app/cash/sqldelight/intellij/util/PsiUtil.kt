@@ -16,8 +16,6 @@
 
 package app.cash.sqldelight.intellij.util
 
-import app.cash.sqldelight.core.lang.SqlDelightFile
-import com.alecstrong.sql.psi.core.DialectPreset
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
@@ -30,12 +28,3 @@ internal inline fun <reified T : PsiElement> PsiFile.findElementOfTypeAtOffset(
 ): T? {
   return PsiTreeUtil.findElementOfClassAtOffset(this, offset, T::class.java, false)
 }
-
-private val sqliteDialects = enumValues<DialectPreset>()
-  .filterTo(mutableSetOf()) { it.name.startsWith("sqlite", true) }
-
-internal val DialectPreset?.isSqlite: Boolean
-  get() = this in sqliteDialects
-
-internal val PsiElement.sqlDialect: DialectPreset?
-  get() = (containingFile as? SqlDelightFile)?.dialect

@@ -29,7 +29,7 @@ abstract class SqlDelightFile(
     }
   }
 
-  val dialect
+  internal val dialect
     get() = SqlDelightProjectService.getInstance(project).dialectPreset
 
   internal abstract val packageName: String?
