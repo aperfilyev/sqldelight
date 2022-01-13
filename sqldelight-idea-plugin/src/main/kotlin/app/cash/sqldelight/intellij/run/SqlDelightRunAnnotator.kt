@@ -1,7 +1,7 @@
 package app.cash.sqldelight.intellij.run
 
-import app.cash.sqldelight.core.SqlDelightProjectService
 import app.cash.sqldelight.core.psi.SqlDelightStmtClojureStmtList
+import app.cash.sqldelight.intellij.util.dialectPreset
 import com.alecstrong.sql.psi.core.DialectPreset
 import com.alecstrong.sql.psi.core.psi.SqlStmt
 import com.alecstrong.sql.psi.core.psi.SqlStmtList
@@ -23,7 +23,7 @@ internal class SqlDelightRunAnnotator : Annotator {
     }
     val project = element.project
     val connectionOptions = ConnectionOptions(project)
-    val annotator = when (SqlDelightProjectService.getInstance(project).dialectPreset) {
+    val annotator = when (project.dialectPreset) {
       DialectPreset.SQLITE_3_18,
       DialectPreset.SQLITE_3_24,
       DialectPreset.SQLITE_3_25 -> RunSqliteAnnotator(holder, connectionOptions)

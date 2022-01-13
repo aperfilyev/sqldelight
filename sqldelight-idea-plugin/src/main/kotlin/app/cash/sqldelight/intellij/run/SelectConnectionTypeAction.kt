@@ -1,7 +1,7 @@
 package app.cash.sqldelight.intellij.run
 
-import app.cash.sqldelight.core.SqlDelightProjectService
-import com.alecstrong.sql.psi.core.DialectPreset
+import app.cash.sqldelight.intellij.util.dialectPreset
+import app.cash.sqldelight.intellij.util.isSqlite
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.propComponentProperty
 import com.intellij.openapi.actionSystem.AnAction
@@ -34,12 +34,8 @@ internal class SelectConnectionTypeAction : AnAction() {
 
   override fun update(e: AnActionEvent) {
     val project = e.project ?: return
-    val projectService = SqlDelightProjectService.getInstance(project)
-    e.presentation.isEnabledAndVisible = projectService.dialectPreset.isSqlite
+    e.presentation.isEnabledAndVisible = project.dialectPreset.isSqlite
   }
-
-  private val DialectPreset.isSqlite: Boolean
-    get() = name.startsWith("sqlite", true)
 }
 
 internal enum class ConnectionType(val type: Int) {
@@ -115,7 +111,7 @@ internal class SelectConnectionTypeDialog(
 
   private fun validateFilePath(selected: () -> Boolean): ValidationInfoBuilder.(TextFieldWithHistoryWithBrowseButton) -> ValidationInfo? = {
     if (selected() && it.text.isEmpty()) {
-      error("Empty file path")
+      error("The file path is empty")
     } else {
       null
     }

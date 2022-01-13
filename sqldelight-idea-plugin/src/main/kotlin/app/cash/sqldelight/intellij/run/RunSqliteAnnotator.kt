@@ -60,14 +60,14 @@ internal class RunSqliteAnnotator(
   private class RunSqliteAction(private val stmt: SqlStmt) : AnAction() {
 
     private val project = stmt.project
-    private val executor = SqlDelightQueryExecutor.getInstance(project)
+    private val executor = SqlDelightStatementExecutor.getInstance(project)
 
     override fun actionPerformed(e: AnActionEvent) {
       val sql = stmt.rawSqlText().trim().replace("\\s+".toRegex(), " ")
 
       val identifier = stmt.identifier
       val parameters = identifier?.let { findParameters(stmt, it) } ?: emptyList()
-      val finalStatement = if (parameters.isEmpty()) {
+      val sqlStmt = if (parameters.isEmpty()) {
         sql
       } else {
         val dialog = InputArgumentsDialog(project, parameters)
@@ -76,7 +76,7 @@ internal class RunSqliteAnnotator(
 
         bindParameters(sql, dialog.result) ?: return
       }
-      executor.execute(finalStatement)
+      executor.execute(sqlStmt)
     }
 
     private val SqlStmt.identifier: StmtIdentifierMixin? get() {
