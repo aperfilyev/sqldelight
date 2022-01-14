@@ -11,10 +11,12 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.serviceContainer.NonInjectable
 import com.jakewharton.picnic.BorderStyle
 import com.jakewharton.picnic.TextAlignment
 import com.jakewharton.picnic.renderText
 import com.jakewharton.picnic.table
+import org.jetbrains.annotations.TestOnly
 import java.awt.BorderLayout
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -31,9 +33,16 @@ internal interface SqlDelightStatementExecutor {
   }
 }
 
-internal class SqlDelightStatementExecutorImpl(
-  private val project: Project
+internal class SqlDelightStatementExecutorImpl @NonInjectable @TestOnly constructor(
+  private val project: Project,
+  private val connectionManager: ConnectionManager
 ) : SqlDelightStatementExecutor {
+
+  @Suppress("unused")
+  constructor(project: Project) : this(
+    project = project,
+    connectionManager = ConnectionManager.getInstance(project)
+  )
 
   override fun execute(sqlStmt: String) {
     val consoleView = getConsoleView(project) ?: return
@@ -42,7 +51,7 @@ internal class SqlDelightStatementExecutorImpl(
       val path = connectionOptions.filePath
       if (path.isEmpty()) return
 
-      ConnectionManager.getInstance(project).getConnection().use { connection ->
+      connectionManager.getConnection().use { connection ->
         val statement = connection.createStatement()
         val hasResult = statement.execute(sqlStmt)
         if (hasResult) {

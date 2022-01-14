@@ -5,17 +5,27 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.layout.panel
 import javax.swing.JComponent
 
-internal class InputArgumentsDialog(
+internal interface ArgumentsInputDialog {
+  val result: List<SqlParameter>
+
+  fun showAndGet(): Boolean
+
+  interface Factory {
+    fun create(project: Project, parameters: List<SqlParameter>): ArgumentsInputDialog
+  }
+}
+
+internal class ArgumentsInputDialogImpl(
   project: Project,
   private val parameters: List<SqlParameter>
-) : DialogWrapper(project) {
+) : DialogWrapper(project), ArgumentsInputDialog {
 
   init {
     init()
   }
 
   private val _result = mutableListOf<SqlParameter>()
-  val result: List<SqlParameter> = _result
+  override val result: List<SqlParameter> = _result
 
   override fun createCenterPanel(): JComponent {
     return panel {
@@ -27,5 +37,11 @@ internal class InputArgumentsDialog(
         }
       }
     }
+  }
+}
+
+internal class ArgumentsInputDialogFactoryImpl : ArgumentsInputDialog.Factory {
+  override fun create(project: Project, parameters: List<SqlParameter>): ArgumentsInputDialog {
+    return ArgumentsInputDialogImpl(project, parameters)
   }
 }
