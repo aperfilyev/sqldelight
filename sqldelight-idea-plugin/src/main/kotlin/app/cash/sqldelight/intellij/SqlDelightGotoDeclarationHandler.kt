@@ -51,6 +51,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComme
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
+/**
+ * Navigate from function name
+ * Navigate to file
+ * Navigate from property
+ * Navigate from named parameter
+ *
+ */
 class SqlDelightGotoDeclarationHandler : GotoDeclarationHandler {
   override fun getGotoDeclarationTargets(
     sourceElement: PsiElement?,
@@ -73,6 +80,12 @@ class SqlDelightGotoDeclarationHandler : GotoDeclarationHandler {
     // Only handle files under the generated sqlite directory.
     val fileIndex = SqlDelightFileIndex.getInstance(module)
     if (!fileIndex.isConfigured) return emptyArray()
+
+
+    //build/generated/sqldelight/code/Database
+    //file:///home/aperfilyev/Projects/Kotlin/sqldelight-playground/build/generated/sqldelight/code/Database
+
+    //TargetData(parameter=VALUE_PARAMETER, function=FUN, containingFile=file:///home/aperfilyev/Projects/Kotlin/sqldelight-playground/build/generated/sqldelight/code/Database/com/example/ExampleQueries.kt)
 
     fileIndex.outputDirectories().forEach { dir ->
       val outputDirectory = fileIndex.contentRoot.findFileByRelativePath(dir) ?: return emptyArray()
@@ -123,11 +136,23 @@ class SqlDelightGotoDeclarationHandler : GotoDeclarationHandler {
     return when (val resolved = reference.resolve()) {
       is KtParameter -> {
         val ktClass = resolved.containingClass() ?: return null
-        val element = ReferencesSearch.search(ktClass)
-          .mapping { it.element }
-          .firstOrNull {
-            it.containingFile.virtualFile.nameWithoutExtension.endsWith(QUERIES_SUFFIX_NAME)
-          } ?: return null
+        val element =
+          if (ktClass.containingFile.virtualFile.nameWithoutExtension.endsWith(QUERIES_SUFFIX_NAME)) {
+            ReferencesSearch.search(resolved)
+              .mapping { it.element }
+              .firstOrNull {
+                it.containingFile.virtualFile.nameWithoutExtension.endsWith(QUERIES_SUFFIX_NAME)
+              }
+          } else {
+            ReferencesSearch.search(ktClass)
+              .mapping { it.element }
+              .firstOrNull {
+                it.containingFile.virtualFile.nameWithoutExtension.endsWith(QUERIES_SUFFIX_NAME)
+              }
+          }
+        if (element == null) {
+          return null
+        }
         TargetData(
           parameter = resolved,
           function = element.getParentOfType(true)!!,

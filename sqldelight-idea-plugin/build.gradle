@@ -12,8 +12,8 @@ intellij {
   updateSinceUntilBuild = false
 
   // Comment version and uncomment localPath to test a local IDE build.
-  version = "IC-${libs.versions.idea.get()}"
-//  localPath = "/Applications/Android Studio.app"
+//  version = "IC-${libs.versions.idea.get()}"
+  localPath = "/home/aperfilyev/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-2/221.6008.13.2211.9619390/"
 
   pluginName = 'SQLDelight'
   plugins = [
@@ -93,7 +93,7 @@ dependencies {
   implementation libs.moshi
 
   testImplementation libs.truth
-  testImplementation libs.intellij.android
+//  testImplementation libs.intellij.android
   testImplementation projects.dialects.sqlite318
 }
 
